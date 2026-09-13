@@ -39,13 +39,14 @@ class YouTubeVideoCard extends StatelessWidget {
                 Positioned(top: 0, left: 0, right: 0, bottom: 0, child: Center(child: Container(width: 44.w, height: 44.h, decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.black.withValues(alpha: 0.5)), child: Icon(Icons.play_arrow, color: Colors.white, size: 28.sp)))),
               ],
             ),
-            Padding(
-              padding: EdgeInsets.all(8.w),
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text(video.title, maxLines: 2, overflow: TextOverflow.ellipsis, style: TextStyle(color: Colors.white, fontSize: 12.sp, fontWeight: FontWeight.w500, height: 1.3)),
-                SizedBox(height: 4.h),
-                Text(video.channelName, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: AppColors.textMuted, fontSize: 11.sp)),
-              ]),
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.all(8.w),
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                  Text(video.title, maxLines: 2, overflow: TextOverflow.ellipsis, style: TextStyle(color: Colors.white, fontSize: 12.sp, fontWeight: FontWeight.w500, height: 1.3)),
+                  Text(video.channelName, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: AppColors.textMuted, fontSize: 11.sp)),
+                ]),
+              ),
             ),
           ],
         ),
