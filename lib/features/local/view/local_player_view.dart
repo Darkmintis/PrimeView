@@ -143,12 +143,12 @@ class _LocalPlayerViewState extends ConsumerState<LocalPlayerView> with WidgetsB
 
   Future<void> _loadExternalSubtitle() async {
     try {
-      final result = await FilePicker.platform.pickFiles(
+      final result = await FilePicker.pickFiles(
         type: FileType.custom,
         allowedExtensions: ['srt', 'ass', 'vtt', 'sub'],
       );
-      if (result != null && result.files.single.path != null) {
-        await _player.setSubtitleTrack(SubtitleTrack.uri(result.files.single.path!));
+      if (result.isNotEmpty && result.single.path != null) {
+        await _player.setSubtitleTrack(SubtitleTrack.uri(result.single.path!));
       }
     } catch (e) {
       if (mounted) {
