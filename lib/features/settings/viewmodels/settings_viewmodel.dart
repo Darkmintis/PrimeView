@@ -91,6 +91,6 @@ class SettingsViewModel extends StateNotifier<SettingsState> {
   }
 }
 
-final settingsProvider = StateNotifierProvider.autoDispose<SettingsViewModel, SettingsState>((ref) {
+final settingsProvider = StateNotifierProvider<SettingsViewModel, SettingsState>((ref) {
   return SettingsViewModel();
 });
