@@ -86,12 +86,6 @@ class YouTubeViewModel extends StateNotifier<YouTubeState> {
   Future<String?> getStreamUrl(String videoId) async {
     return await _service.getStreamUrl(videoId);
   }
-
-  @override
-  void dispose() {
-    _service.dispose();
-    super.dispose();
-  }
 }
 
 final youtubeProvider =
