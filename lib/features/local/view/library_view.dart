@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../shared/widgets/premium_app_bar.dart';
 import '../viewmodels/library_viewmodel.dart';
 import '../widgets/media_permission_gate.dart';
 import '../widgets/video_card.dart';
@@ -26,17 +27,11 @@ class LibraryView extends ConsumerWidget {
                 onRefresh: () => ref.read(libraryProvider.notifier).refresh(),
                 child: CustomScrollView(
                   slivers: [
-                    SliverAppBar(
-                      pinned: true, expandedHeight: 80.h,
-                      backgroundColor: AppColors.background,
-                      surfaceTintColor: Colors.transparent,
-                      title: Row(children: [
-                        Container(width: 32.w, height: 32.h,
-                            decoration: BoxDecoration(gradient: AppColors.premiumGradient, borderRadius: BorderRadius.circular(8.r)),
-                            child: Icon(Icons.video_library, color: Colors.white, size: 20.sp)),
-                        SizedBox(width: 8.w),
-                        Text('Library', style: TextStyle(color: Colors.white, fontSize: 22.sp, fontWeight: FontWeight.bold)),
-                      ]),
+                    PremiumSliverAppBar(
+                      title: 'Library',
+                      showGradientIcon: true,
+                      icon: Icons.video_library,
+                      expandedHeight: 80,
                       actions: [
                         if (libState.recentlyWatched.isNotEmpty)
                           IconButton(
