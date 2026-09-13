@@ -31,27 +31,26 @@ class AppScaffold extends ConsumerWidget {
     ];
 
     return Scaffold(
+      extendBody: true,
       body: IndexedStack(
         index: currentIndex.index,
         children: screens,
       ),
-      bottomNavigationBar: ClipRect(
+      bottomNavigationBar: ClipRRect(
         child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 24, sigmaY: 24),
+          filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
           child: Container(
+            height: 70.h,
             decoration: BoxDecoration(
-              color: AppColors.background.withValues(alpha: 0.75),
+              color: AppColors.background.withValues(alpha: 0.65),
               border: Border(
-                top: BorderSide(
-                  color: Colors.white.withValues(alpha: 0.06),
-                  width: 0.5,
-                ),
+                top: BorderSide(color: Colors.white.withValues(alpha: 0.05), width: 0.5),
               ),
             ),
             child: SafeArea(
               top: false,
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 4.h),
+                padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: List.generate(
@@ -115,15 +114,10 @@ class _NavBarItem extends StatelessWidget {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 250),
         curve: Curves.easeOut,
-        padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
+        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
         decoration: BoxDecoration(
-          color: isSelected
-              ? AppColors.primary.withValues(alpha: 0.12)
-              : Colors.transparent,
+          color: isSelected ? AppColors.primary.withValues(alpha: 0.12) : Colors.transparent,
           borderRadius: BorderRadius.circular(12.r),
-          boxShadow: isSelected
-              ? [BoxShadow(color: AppColors.primary.withValues(alpha: 0.25), blurRadius: 12, spreadRadius: -2)]
-              : null,
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -140,7 +134,7 @@ class _NavBarItem extends StatelessWidget {
                 size: 22.sp,
               ),
             ),
-            SizedBox(height: 3.h),
+            SizedBox(height: 2.h),
             Text(
               label,
               style: TextStyle(
