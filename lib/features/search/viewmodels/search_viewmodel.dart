@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/di/injection_container.dart';
 import '../../../core/models/channel_model.dart';
 import '../services/search_service.dart';
 import '../../playlist/viewmodels/playlist_viewmodel.dart';
@@ -68,7 +69,7 @@ class SearchState {
 }
 
 final searchProvider = StateNotifierProvider<SearchViewModel, SearchState>((ref) {
-  return SearchViewModel(SearchService());
+  return SearchViewModel(sl<SearchService>());
 });
 
 final searchResultsProvider = Provider<List<ChannelModel>>((ref) {
