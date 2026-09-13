@@ -31,6 +31,7 @@ class PlaylistRepository {
                 'language': c.language,
                 'country': c.country,
                 'group': c.group,
+                'quality': c.quality,
                 'isActive': c.isActive,
               })
           .toList();
@@ -57,6 +58,7 @@ class PlaylistRepository {
           language: map['language'] as String?,
           country: map['country'] as String?,
           group: map['group'] as String?,
+          quality: map['quality'] as String?,
           isActive: map['isActive'] as bool? ?? true,
         );
       }).toList();
