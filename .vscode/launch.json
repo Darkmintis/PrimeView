@@ -1,0 +1,138 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "PrimeView (Android)",
+            "type": "dart",
+            "request": "launch",
+            "program": "lib/main.dart",
+            "flutterMode": "debug",
+            "android": {
+                "deviceType": "android",
+                "launchState": "launch",
+                "installAndLaunch": true
+            }
+        },
+        {
+            "name": "PrimeView (Android Release)",
+            "type": "dart",
+            "request": "launch",
+            "program": "lib/main.dart",
+            "flutterMode": "release",
+            "android": {
+                "deviceType": "android",
+                "launchState": "launch",
+                "installAndLaunch": true
+            }
+        },
+        {
+            "name": "PrimeView (iOS)",
+            "type": "dart",
+            "request": "launch",
+            "program": "lib/main.dart",
+            "flutterMode": "debug",
+            "ios": {
+                "deviceType": "ios",
+                "launchState": "launch"
+            }
+        },
+        {
+            "name": "PrimeView (iOS Release)",
+            "type": "dart",
+            "request": "launch",
+            "program": "lib/main.dart",
+            "flutterMode": "release",
+            "ios": {
+                "deviceType": "ios",
+                "launchState": "launch"
+            }
+        },
+        {
+            "name": "PrimeView (Web)",
+            "type": "dart",
+            "request": "launch",
+            "program": "lib/main.dart",
+            "flutterMode": "debug",
+            "args": ["-d", "chrome", "--web-port=8080"],
+            "web": {
+                "webServerPort": 8080,
+                "launchUrl": "http://localhost:8080"
+            }
+        },
+        {
+            "name": "PrimeView (Web Release)",
+            "type": "dart",
+            "request": "launch",
+            "program": "lib/main.dart",
+            "flutterMode": "release",
+            "args": ["-d", "chrome", "--web-port=8080"],
+            "web": {
+                "webServerPort": 8080,
+                "launchUrl": "http://localhost:8080"
+            }
+        },
+        {
+            "name": "PrimeView (Windows)",
+            "type": "dart",
+            "request": "launch",
+            "program": "lib/main.dart",
+            "flutterMode": "debug"
+        },
+        {
+            "name": "PrimeView (Windows Release)",
+            "type": "dart",
+            "request": "launch",
+            "program": "lib/main.dart",
+            "flutterMode": "release"
+        },
+        {
+            "name": "PrimeView (macOS)",
+            "type": "dart",
+            "request": "launch",
+            "program": "lib/main.dart",
+            "flutterMode": "debug"
+        },
+        {
+            "name": "PrimeView (macOS Release)",
+            "type": "dart",
+            "request": "launch",
+            "program": "lib/main.dart",
+            "flutterMode": "release"
+        },
+        {
+            "name": "PrimeView (Linux)",
+            "type": "dart",
+            "request": "launch",
+            "program": "lib/main.dart",
+            "flutterMode": "debug"
+        },
+        {
+            "name": "PrimeView (Linux Release)",
+            "type": "dart",
+            "request": "launch",
+            "program": "lib/main.dart",
+            "flutterMode": "release"
+        },
+        {
+            "name": "PrimeView (Attach)",
+            "type": "dart",
+            "request": "attach"
+        },
+        {
+            "name": "PrimeView (Flutter Test)",
+            "type": "dart",
+            "request": "launch",
+            "program": "test/widget_test.dart"
+        }
+    ],
+    "compounds": [
+        {
+            "name": "All Platforms",
+            "configurations": [
+                "PrimeView (Android)",
+                "PrimeView (iOS)",
+                "PrimeView (Web)"
+            ]
+        }
+    ]
+}
