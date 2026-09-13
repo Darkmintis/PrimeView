@@ -1,7 +1,8 @@
 name: primeview
-description: "Open-source IPTV streaming app — no accounts, just watch."
+description: "Open-source media hub — IPTV, YouTube, local video player. No accounts, just watch."
 publish_to: 'none'
 version: 0.1.0+1
+license: GPL-3.0-or-later
 
 environment:
   sdk: ^3.12.1
@@ -30,6 +31,9 @@ dependencies:
   html_unescape: ^2.0.0
   flutter_screenutil: ^5.9.3
   youtube_explode_dart: ^2.3.5
+  permission_handler: ^11.0.0
+  photo_manager: ^3.0.0
+  file_picker: ^6.0.0
 
 dev_dependencies:
   flutter_test:
