@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../shared/widgets/premium_app_bar.dart';
 import '../models/media_folder.dart';
 import '../viewmodels/library_viewmodel.dart';
 import '../widgets/video_card.dart';
@@ -17,12 +18,7 @@ class FolderView extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(
-        backgroundColor: AppColors.background,
-        surfaceTintColor: Colors.transparent,
-        title: Text(folder.name, style: TextStyle(color: Colors.white, fontSize: 18.sp, fontWeight: FontWeight.bold)),
-        iconTheme: IconThemeData(color: Colors.white),
-      ),
+      appBar: PremiumAppBar(title: folder.name),
       body: videos.isEmpty
           ? Center(child: Text('No videos in this folder', style: TextStyle(color: AppColors.textMuted, fontSize: 14.sp)))
           : GridView.builder(
@@ -33,11 +29,7 @@ class FolderView extends ConsumerWidget {
               itemCount: videos.length,
               itemBuilder: (_, i) => VideoCard(
                 video: videos[i],
-                onTap: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                    builder: (_) => LocalPlayerView(video: videos[i]),
-                  ));
-                },
+                onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => LocalPlayerView(video: videos[i]))),
               ),
             ),
     );

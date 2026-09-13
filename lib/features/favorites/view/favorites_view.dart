@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../shared/widgets/premium_app_bar.dart';
 import '../../playlist/widgets/channel_list_item.dart';
 import '../viewmodels/favorites_viewmodel.dart';
 
@@ -14,48 +15,24 @@ class FavoritesView extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(
-        backgroundColor: AppColors.background,
-        surfaceTintColor: Colors.transparent,
-        title: Text('My Favorites', style: TextStyle(color: Colors.white, fontSize: 18.sp, fontWeight: FontWeight.bold)),
-        iconTheme: IconThemeData(color: Colors.white),
-      ),
+      appBar: const PremiumAppBar(title: 'My Favorites', showBack: false),
       body: favoriteChannels.isEmpty
           ? Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(
-                    Icons.favorite_border,
-                    size: 72.sp,
-                    color: AppColors.textMuted.withValues(alpha: 0.5),
-                  ),
+                  Icon(Icons.favorite_border, size: 72.sp, color: AppColors.textMuted.withValues(alpha: 0.5)),
                   SizedBox(height: 16.h),
-                  Text(
-                    'No favorites yet',
-                    style: TextStyle(
-                      color: AppColors.textMuted,
-                      fontSize: 18.sp,
-                    ),
-                  ),
+                  Text('No favorites yet', style: TextStyle(color: AppColors.textMuted, fontSize: 18.sp)),
                   SizedBox(height: 8.h),
-                  Text(
-                    'Add channels to your favorites\nby tapping the heart icon',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: AppColors.textMuted,
-                      fontSize: 14.sp,
-                    ),
-                  ),
+                  Text('Add channels to your favorites\nby tapping the heart icon', textAlign: TextAlign.center, style: TextStyle(color: AppColors.textMuted, fontSize: 14.sp)),
                 ],
               ),
             )
           : ListView.builder(
               padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
               itemCount: favoriteChannels.length,
-              itemBuilder: (context, index) {
-                return ChannelListItem(channel: favoriteChannels[index]);
-              },
+              itemBuilder: (context, index) => ChannelListItem(channel: favoriteChannels[index]),
             ),
     );
   }

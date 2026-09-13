@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../shared/widgets/premium_app_bar.dart';
 import '../viewmodels/playlist_viewmodel.dart';
 import '../widgets/playlist_widgets.dart';
 
@@ -47,7 +48,8 @@ class _PlaylistInputViewState extends ConsumerState<PlaylistInputView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Add Playlist')),
+      backgroundColor: AppColors.background,
+      appBar: const PremiumAppBar(title: 'Add Playlist'),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(24.w),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
