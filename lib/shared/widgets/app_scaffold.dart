@@ -40,7 +40,6 @@ class AppScaffold extends ConsumerWidget {
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
           child: Container(
-            height: 70.h,
             decoration: BoxDecoration(
               color: AppColors.background.withValues(alpha: 0.65),
               border: Border(
@@ -50,19 +49,22 @@ class AppScaffold extends ConsumerWidget {
             child: SafeArea(
               top: false,
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: List.generate(
-                    _navItems.length,
-                    (index) => _NavBarItem(
-                      icon: _navItems[index].icon,
-                      activeIcon: _navItems[index].activeIcon,
-                      label: _navItems[index].label,
-                      isSelected: currentIndex.index == index,
-                      onTap: () => ref
-                          .read(currentTabProvider.notifier)
-                          .state = TabIndex.values[index],
+                padding: EdgeInsets.only(bottom: 4.h),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 6.w),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: List.generate(
+                      _navItems.length,
+                      (index) => _NavBarItem(
+                        icon: _navItems[index].icon,
+                        activeIcon: _navItems[index].activeIcon,
+                        label: _navItems[index].label,
+                        isSelected: currentIndex.index == index,
+                        onTap: () => ref
+                            .read(currentTabProvider.notifier)
+                            .state = TabIndex.values[index],
+                      ),
                     ),
                   ),
                 ),
