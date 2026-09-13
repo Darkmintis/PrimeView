@@ -1,9 +1,12 @@
+import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:video_player/video_player.dart';
+import 'package:media_kit/media_kit.dart';
+import 'package:media_kit_video/media_kit_video.dart' show VideoController;
 import '../../../core/utils/logger.dart';
 
 class PlayerState {
-  final VideoPlayerController? controller;
+  final Player? player;
+  final VideoController? controller;
   final bool isInitialized;
   final bool isPlaying;
   final bool isFullScreen;
@@ -11,7 +14,6 @@ class PlayerState {
   final Duration duration;
   final double volume;
   final bool isMuted;
-  final double brightness;
   final double playbackSpeed;
   final bool showControls;
   final bool hasError;
@@ -19,6 +21,7 @@ class PlayerState {
   final bool isLoading;
 
   const PlayerState({
+    this.player,
     this.controller,
     this.isInitialized = false,
     this.isPlaying = false,
@@ -27,7 +30,6 @@ class PlayerState {
     this.duration = Duration.zero,
     this.volume = 1.0,
     this.isMuted = false,
-    this.brightness = 1.0,
     this.playbackSpeed = 1.0,
     this.showControls = true,
     this.hasError = false,
@@ -36,7 +38,8 @@ class PlayerState {
   });
 
   PlayerState copyWith({
-    VideoPlayerController? controller,
+    Player? player,
+    VideoController? controller,
     bool? isInitialized,
     bool? isPlaying,
     bool? isFullScreen,
@@ -44,7 +47,6 @@ class PlayerState {
     Duration? duration,
     double? volume,
     bool? isMuted,
-    double? brightness,
     double? playbackSpeed,
     bool? showControls,
     bool? hasError,
@@ -52,6 +54,7 @@ class PlayerState {
     bool? isLoading,
   }) {
     return PlayerState(
+      player: player ?? this.player,
       controller: controller ?? this.controller,
       isInitialized: isInitialized ?? this.isInitialized,
       isPlaying: isPlaying ?? this.isPlaying,
@@ -60,7 +63,6 @@ class PlayerState {
       duration: duration ?? this.duration,
       volume: volume ?? this.volume,
       isMuted: isMuted ?? this.isMuted,
-      brightness: brightness ?? this.brightness,
       playbackSpeed: playbackSpeed ?? this.playbackSpeed,
       showControls: showControls ?? this.showControls,
       hasError: hasError ?? this.hasError,
@@ -71,30 +73,55 @@ class PlayerState {
 }
 
 class PlayerViewModel extends StateNotifier<PlayerState> {
+  StreamSubscription<Duration>? _positionSub;
+  StreamSubscription<Duration>? _durationSub;
+  StreamSubscription<bool>? _playingSub;
+  StreamSubscription<bool>? _completedSub;
+
   PlayerViewModel() : super(const PlayerState());
 
   Future<void> initialize(String url) async {
     state = state.copyWith(isLoading: true, hasError: false, errorMessage: null);
 
     try {
-      final controller = VideoPlayerController.networkUrl(
-        Uri.parse(url),
-      );
+      final player = Player();
+      final controller = VideoController(player);
 
-      state = state.copyWith(controller: controller);
+      state = state.copyWith(player: player, controller: controller);
 
-      await controller.initialize();
-      controller.addListener(_onControllerUpdate);
-      controller.play();
+      _positionSub = player.stream.position.listen((position) {
+        if (mounted) {
+          state = state.copyWith(position: position);
+        }
+      });
+
+      _durationSub = player.stream.duration.listen((duration) {
+        if (mounted) {
+          state = state.copyWith(duration: duration);
+        }
+      });
+
+      _playingSub = player.stream.playing.listen((playing) {
+        if (mounted) {
+          state = state.copyWith(isPlaying: playing);
+        }
+      });
+
+      _completedSub = player.stream.completed.listen((completed) {
+        if (completed && mounted) {
+          state = state.copyWith(isPlaying: false);
+        }
+      });
+
+      await player.open(Media(url));
 
       state = state.copyWith(
         isInitialized: true,
         isPlaying: true,
         isLoading: false,
-        duration: controller.value.duration,
       );
 
-      AppLogger.info('Player initialized: ${url.substring(0, min(80, url.length))}...');
+      AppLogger.info('Player initialized: ${url.substring(0, url.length < 80 ? url.length : 80)}...');
     } catch (e) {
       AppLogger.error('Failed to initialize player', error: e);
       state = state.copyWith(
@@ -105,39 +132,13 @@ class PlayerViewModel extends StateNotifier<PlayerState> {
     }
   }
 
-  void _onControllerUpdate() {
-    final controller = state.controller;
-    if (controller == null || !controller.value.isInitialized) return;
-
-    if (controller.value.hasError) {
-      AppLogger.error('Video player error: ${controller.value.errorDescription}');
-      state = state.copyWith(
-        hasError: true,
-        errorMessage: controller.value.errorDescription ?? 'Playback error occurred',
-        isPlaying: false,
-        isLoading: false,
-      );
-      return;
-    }
-
-    state = state.copyWith(
-      isPlaying: controller.value.isPlaying,
-      position: controller.value.position,
-      duration: controller.value.duration,
-      isLoading: false,
-    );
-  }
-
   void play() {
-    final controller = state.controller;
-    if (controller == null || !controller.value.isInitialized) return;
-    if (state.hasError) return;
-    controller.play();
+    state.player?.play();
     state = state.copyWith(isPlaying: true);
   }
 
   void pause() {
-    state.controller?.pause();
+    state.player?.pause();
     state = state.copyWith(isPlaying: false);
   }
 
@@ -150,31 +151,28 @@ class PlayerViewModel extends StateNotifier<PlayerState> {
   }
 
   void seekTo(Duration position) {
-    state.controller?.seekTo(position);
+    state.player?.seek(position);
   }
 
   void seekForward([int seconds = 10]) {
-    final pos = state.position;
-    final dur = state.duration;
-    final target = pos + Duration(seconds: seconds);
-    seekTo(target > dur ? dur : target);
+    final target = state.position + Duration(seconds: seconds);
+    seekTo(target > state.duration ? state.duration : target);
   }
 
   void seekBackward([int seconds = 10]) {
-    final pos = state.position;
-    final target = pos - Duration(seconds: seconds);
+    final target = state.position - Duration(seconds: seconds);
     seekTo(target < Duration.zero ? Duration.zero : target);
   }
 
   void setVolume(double volume) {
     final clamped = volume.clamp(0.0, 1.0);
-    state.controller?.setVolume(clamped);
+    state.player?.setVolume(clamped * 100);
     state = state.copyWith(volume: clamped, isMuted: clamped == 0);
   }
 
   void toggleMute() {
     final muted = !state.isMuted;
-    state.controller?.setVolume(muted ? 0.0 : state.volume);
+    state.player?.setVolume(muted ? 0 : state.volume * 100);
     state = state.copyWith(isMuted: muted);
   }
 
@@ -186,18 +184,15 @@ class PlayerViewModel extends StateNotifier<PlayerState> {
     setVolume((state.volume - 0.1).clamp(0.0, 1.0));
   }
 
-  void setBrightness(double brightness) {
-    state = state.copyWith(brightness: brightness.clamp(0.0, 1.0));
-  }
-
   Future<void> switchChannel(String url) async {
-    final oldController = state.controller;
-    if (oldController != null) {
-      oldController.removeListener(_onControllerUpdate);
-      oldController.pause();
-      oldController.dispose();
+    await _disposeStreams();
+    final oldPlayer = state.player;
+    if (oldPlayer != null) {
+      await oldPlayer.stop();
+      await oldPlayer.dispose();
     }
     state = state.copyWith(
+      player: null,
       controller: null,
       isInitialized: false,
       isPlaying: false,
@@ -213,7 +208,7 @@ class PlayerViewModel extends StateNotifier<PlayerState> {
 
   void setPlaybackSpeed(double speed) {
     final clamped = speed.clamp(0.25, 2.0);
-    state.controller?.setPlaybackSpeed(clamped);
+    state.player?.setRate(clamped);
     state = state.copyWith(playbackSpeed: clamped);
   }
 
@@ -234,30 +229,37 @@ class PlayerViewModel extends StateNotifier<PlayerState> {
   }
 
   Future<void> retry(String url) async {
-    final oldController = state.controller;
-    if (oldController != null) {
-      oldController.removeListener(_onControllerUpdate);
-      oldController.pause();
-      oldController.dispose();
+    await _disposeStreams();
+    final oldPlayer = state.player;
+    if (oldPlayer != null) {
+      await oldPlayer.stop();
+      await oldPlayer.dispose();
     }
     state = const PlayerState();
     await initialize(url);
   }
 
+  Future<void> _disposeStreams() async {
+    await _positionSub?.cancel();
+    await _durationSub?.cancel();
+    await _playingSub?.cancel();
+    await _completedSub?.cancel();
+    _positionSub = null;
+    _durationSub = null;
+    _playingSub = null;
+    _completedSub = null;
+  }
+
   @override
   void dispose() {
-    final controller = state.controller;
-    if (controller != null) {
-      controller.removeListener(_onControllerUpdate);
-      controller.pause();
-      controller.dispose();
-    }
+    _disposeStreams();
+    state.player?.stop();
+    state.player?.dispose();
     super.dispose();
   }
 }
 
-final playerViewModelProvider = StateNotifierProvider.autoDispose<PlayerViewModel, PlayerState>((ref) {
+final playerViewModelProvider =
+    StateNotifierProvider.autoDispose<PlayerViewModel, PlayerState>((ref) {
   return PlayerViewModel();
 });
-
-int min(int a, int b) => a < b ? a : b;
