@@ -21,7 +21,6 @@ void main() {
       final viewModel = SettingsViewModel();
 
       expect(viewModel.state.playlistUrl, AppConstants.defaultPlaylistUrl);
-      expect(viewModel.state.useExternalPlayer, false);
       expect(viewModel.state.autoPlay, true);
       expect(viewModel.state.rememberLastChannel, true);
 
@@ -31,14 +30,12 @@ void main() {
     test('loads persisted settings', () async {
       final box = Hive.box(AppConstants.hiveBoxName);
       await box.put('playlist_url', 'http://custom.com/playlist.m3u');
-      await box.put('use_external_player', true);
       await box.put('auto_play', false);
       await box.put('remember_last_channel', false);
 
       final vm = SettingsViewModel();
 
       expect(vm.state.playlistUrl, 'http://custom.com/playlist.m3u');
-      expect(vm.state.useExternalPlayer, true);
       expect(vm.state.autoPlay, false);
       expect(vm.state.rememberLastChannel, false);
 
@@ -52,28 +49,6 @@ void main() {
 
         expect(viewModel.state.playlistUrl, 'http://new.com/playlist.m3u');
         expect(Hive.box(AppConstants.hiveBoxName).get('playlist_url'), 'http://new.com/playlist.m3u');
-
-        viewModel.dispose();
-      });
-    });
-
-    group('setUseExternalPlayer', () {
-      test('toggles external player setting', () async {
-        final viewModel = SettingsViewModel();
-        await viewModel.setUseExternalPlayer(true);
-
-        expect(viewModel.state.useExternalPlayer, true);
-        expect(Hive.box(AppConstants.hiveBoxName).get('use_external_player'), true);
-
-        viewModel.dispose();
-      });
-
-      test('can toggle back to false', () async {
-        final viewModel = SettingsViewModel();
-        await viewModel.setUseExternalPlayer(true);
-        await viewModel.setUseExternalPlayer(false);
-
-        expect(viewModel.state.useExternalPlayer, false);
 
         viewModel.dispose();
       });
@@ -108,7 +83,6 @@ void main() {
     test('copyWith preserves unmodified fields', () {
       const state = SettingsState(
         playlistUrl: 'http://old.com',
-        useExternalPlayer: true,
         autoPlay: false,
         rememberLastChannel: false,
       );
@@ -116,7 +90,6 @@ void main() {
       final newState = state.copyWith(playlistUrl: 'http://new.com');
 
       expect(newState.playlistUrl, 'http://new.com');
-      expect(newState.useExternalPlayer, true);
       expect(newState.autoPlay, false);
       expect(newState.rememberLastChannel, false);
     });
@@ -125,7 +98,6 @@ void main() {
       const state = SettingsState();
 
       expect(state.playlistUrl, AppConstants.defaultPlaylistUrl);
-      expect(state.useExternalPlayer, false);
       expect(state.autoPlay, true);
       expect(state.rememberLastChannel, true);
     });

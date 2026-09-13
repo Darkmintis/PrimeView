@@ -18,7 +18,7 @@ class PlayerView extends ConsumerStatefulWidget {
 }
 
 class _PlayerViewState extends ConsumerState<PlayerView> with WidgetsBindingObserver {
-  ChannelModel? _currentChannel;
+  late final ChannelModel _currentChannel;
   bool _isInPip = false;
 
   @override
@@ -29,8 +29,8 @@ class _PlayerViewState extends ConsumerState<PlayerView> with WidgetsBindingObse
     WakelockPlus.enable();
     SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight, DeviceOrientation.portraitUp]);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(playerViewModelProvider.notifier).initialize(_currentChannel!.url);
-      saveLastWatchedChannel(_currentChannel!);
+      ref.read(playerViewModelProvider.notifier).initialize(_currentChannel.url);
+      saveLastWatchedChannel(_currentChannel);
     });
   }
 
@@ -52,7 +52,6 @@ class _PlayerViewState extends ConsumerState<PlayerView> with WidgetsBindingObse
   }
 
   void _switchChannel(ChannelModel channel) {
-    setState(() => _currentChannel = channel);
     ref.read(playerViewModelProvider.notifier).switchChannel(channel.url);
     saveLastWatchedChannel(channel);
   }
@@ -60,7 +59,6 @@ class _PlayerViewState extends ConsumerState<PlayerView> with WidgetsBindingObse
   @override
   Widget build(BuildContext context) {
     final ps = ref.watch(playerViewModelProvider);
-    final channel = _currentChannel!;
 
     if (ps.isFullScreen) {
       SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
@@ -74,7 +72,7 @@ class _PlayerViewState extends ConsumerState<PlayerView> with WidgetsBindingObse
       backgroundColor: Colors.black,
       body: SafeArea(
         top: !ps.isFullScreen, bottom: !ps.isFullScreen,
-        child: _buildContent(ps, channel),
+        child: _buildContent(ps, _currentChannel),
       ),
     );
   }

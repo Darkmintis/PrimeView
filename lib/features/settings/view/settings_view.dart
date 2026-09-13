@@ -20,7 +20,7 @@ class SettingsView extends ConsumerWidget {
       body: CustomScrollView(
         physics: const BouncingScrollPhysics(),
         slivers: [
-          SliverAppBar(expandedHeight: 120.h, pinned: true, backgroundColor: AppColors.background, title: Text('Settings', style: GoogleFonts.playfairDisplay(color: Colors.white, fontSize: 20.sp, fontWeight: FontWeight.w700)),
+          SliverAppBar(expandedHeight: 120.h, pinned: true, backgroundColor: AppColors.background, surfaceTintColor: Colors.transparent,
             flexibleSpace: FlexibleSpaceBar(background: Padding(padding: EdgeInsets.only(left: 16.w, bottom: 48.h), child: Column(mainAxisAlignment: MainAxisAlignment.end, crossAxisAlignment: CrossAxisAlignment.start, children: [
               Text('Settings', style: GoogleFonts.playfairDisplay(color: Colors.white, fontSize: 28.sp, fontWeight: FontWeight.w700)),
               SizedBox(height: 4.h),
@@ -33,7 +33,6 @@ class SettingsView extends ConsumerWidget {
               SizedBox(height: 12.h),
               SettingsTile(icon: Icons.play_circle_outline, title: 'Auto-play on start', subtitle: 'Automatically play when opening a channel', trailing: Switch(value: settings.autoPlay, onChanged: (v) => ref.read(settingsProvider.notifier).setAutoPlay(v), activeTrackColor: AppColors.primary)),
               SettingsTile(icon: Icons.history, title: 'Remember last channel', subtitle: 'Resume from last watched channel', trailing: Switch(value: settings.rememberLastChannel, onChanged: (v) => ref.read(settingsProvider.notifier).setRememberLastChannel(v), activeTrackColor: AppColors.primary)),
-              SettingsTile(icon: Icons.open_in_new, title: 'External player', subtitle: 'Open streams in external video player', trailing: Switch(value: settings.useExternalPlayer, onChanged: (v) => ref.read(settingsProvider.notifier).setUseExternalPlayer(v), activeTrackColor: AppColors.primary)),
               SizedBox(height: 24.h),
               const SectionHeader(title: 'Playlist'),
               SizedBox(height: 12.h),

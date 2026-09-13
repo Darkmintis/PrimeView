@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -23,6 +24,7 @@ class LocalPlayerView extends ConsumerStatefulWidget {
 class _LocalPlayerViewState extends ConsumerState<LocalPlayerView> with WidgetsBindingObserver {
   late Player _player;
   late VideoController _controller;
+  final List<StreamSubscription> _subscriptions = [];
   bool _isLoading = true;
   bool _hasError = false;
   String? _errorMsg;
@@ -49,36 +51,25 @@ class _LocalPlayerViewState extends ConsumerState<LocalPlayerView> with WidgetsB
 
   Future<void> _initPlayer() async {
     try {
-      _player.stream.position.listen((p) {
+      _subscriptions.add(_player.stream.position.listen((p) {
         if (mounted) setState(() => _position = p);
-      });
-      _player.stream.duration.listen((d) {
+      }));
+      _subscriptions.add(_player.stream.duration.listen((d) {
         if (mounted) setState(() => _duration = d);
-      });
-      _player.stream.playing.listen((p) {
+      }));
+      _subscriptions.add(_player.stream.playing.listen((p) {
         if (mounted) setState(() => _isPlaying = p);
-      });
-      _player.stream.tracks.listen((t) {
-        if (mounted) {
-          setState(() {
-            _audioTracks = t.audio;
-            _subtitleTracks = t.subtitle;
-          });
-        }
-      });
-      _player.stream.track.listen((t) {
-        if (mounted) {
-          setState(() {
-            _currentAudio = t.audio;
-            _currentSubtitle = t.subtitle;
-          });
-        }
-      });
+      }));
+      _subscriptions.add(_player.stream.tracks.listen((t) {
+        if (mounted) setState(() { _audioTracks = t.audio; _subtitleTracks = t.subtitle; });
+      }));
+      _subscriptions.add(_player.stream.track.listen((t) {
+        if (mounted) setState(() { _currentAudio = t.audio; _currentSubtitle = t.subtitle; });
+      }));
 
       final resumePos = sl<LocalRepository>().getResumePosition(widget.video.id);
-
       await _player.open(Media('file:///${widget.video.path}'));
-      if (resumePos > Duration.zero && resumePos < _duration) {
+      if (resumePos > Duration.zero) {
         await _player.seek(resumePos);
       }
 
@@ -97,6 +88,8 @@ class _LocalPlayerViewState extends ConsumerState<LocalPlayerView> with WidgetsB
   @override
   void dispose() {
     sl<LocalRepository>().saveResumePosition(widget.video.id, _position);
+    for (final sub in _subscriptions) { sub.cancel(); }
+    _subscriptions.clear();
     _player.pause();
     _player.stop();
     _player.dispose();

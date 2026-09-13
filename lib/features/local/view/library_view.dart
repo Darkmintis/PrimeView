@@ -6,6 +6,7 @@ import '../viewmodels/library_viewmodel.dart';
 import '../widgets/media_permission_gate.dart';
 import '../widgets/video_card.dart';
 import '../widgets/folder_card.dart';
+import '../models/local_video.dart';
 import 'folder_view.dart';
 import 'local_player_view.dart';
 
@@ -128,7 +129,7 @@ class LibraryView extends ConsumerWidget {
     );
   }
 
-  void _playVideo(BuildContext context, WidgetRef ref, video) {
+  void _playVideo(BuildContext context, WidgetRef ref, LocalVideo video) {
     Navigator.of(context).push(MaterialPageRoute(
       builder: (_) => LocalPlayerView(video: video),
     ));

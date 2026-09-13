@@ -13,8 +13,12 @@ class FavoritesView extends ConsumerWidget {
     final favoriteChannels = ref.watch(favoriteChannelsProvider);
 
     return Scaffold(
+      backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: Text('My Favorites'),
+        backgroundColor: AppColors.background,
+        surfaceTintColor: Colors.transparent,
+        title: Text('My Favorites', style: TextStyle(color: Colors.white, fontSize: 18.sp, fontWeight: FontWeight.bold)),
+        iconTheme: IconThemeData(color: Colors.white),
       ),
       body: favoriteChannels.isEmpty
           ? Center(

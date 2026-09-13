@@ -25,7 +25,7 @@ class RecordingsView extends ConsumerWidget {
             flexibleSpace: FlexibleSpaceBar(background: Container(decoration: const BoxDecoration(gradient: LinearGradient(colors: [Color(0xFF0B0B1A), AppColors.background], begin: Alignment.topCenter, end: Alignment.bottomCenter)))),
           ),
           if (recordings.isEmpty) const SliverFillRemaining(child: EmptyRecordings())
-          else SliverPadding(padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h), sliver: SliverList(delegate: SliverChildBuilderDelegate((_, i) => RecordingCard(recording: recordings[i], onDelete: () => ref.read(recordingsProvider.notifier).deleteRecording(recordings[i])), childCount: recordings.length))),
+          else SliverPadding(padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 100.h), sliver: SliverList(delegate: SliverChildBuilderDelegate((_, i) => RecordingCard(recording: recordings[i], onDelete: () => ref.read(recordingsProvider.notifier).deleteRecording(recordings[i])), childCount: recordings.length))),
         ],
       ),
     );
