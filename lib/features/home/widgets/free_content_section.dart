@@ -1,6 +1,8 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../core/theme/app_colors.dart';
 import '../../youtube/view/youtube_view.dart';
 
 class FreeContentSection extends StatelessWidget {
@@ -13,7 +15,10 @@ class FreeContentSection extends StatelessWidget {
       children: [
         Padding(
           padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 8.h),
-          child: Text('Free Content', style: GoogleFonts.playfairDisplay(color: Colors.white, fontSize: 20.sp, fontWeight: FontWeight.w700)),
+          child: ShaderMask(
+            shaderCallback: (bounds) => const LinearGradient(colors: [AppColors.primary, AppColors.primaryLight]).createShader(bounds),
+            child: Text('Free Content', style: GoogleFonts.playfairDisplay(color: Colors.white, fontSize: 20.sp, fontWeight: FontWeight.w700)),
+          ),
         ),
         SizedBox(
           height: 90.h,
@@ -48,19 +53,29 @@ class _FreeContentCard extends StatelessWidget {
       child: Container(
         width: 160.w,
         margin: EdgeInsets.symmetric(horizontal: 4.w),
-        decoration: BoxDecoration(gradient: gradient, borderRadius: BorderRadius.circular(16.r)),
-        child: Padding(
-          padding: EdgeInsets.all(14.w),
-          child: Row(
-            children: [
-              Container(width: 44.w, height: 44.h, decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(12.r)), child: Icon(icon, color: Colors.white, size: 24.sp)),
-              SizedBox(width: 12.w),
-              Expanded(child: Column(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text(title, style: TextStyle(color: Colors.white, fontSize: 15.sp, fontWeight: FontWeight.bold)),
-                SizedBox(height: 2.h),
-                Text(subtitle, style: TextStyle(color: Colors.white70, fontSize: 11.sp), maxLines: 1, overflow: TextOverflow.ellipsis),
-              ])),
-            ],
+        decoration: BoxDecoration(
+          gradient: gradient,
+          borderRadius: BorderRadius.circular(16.r),
+          boxShadow: [BoxShadow(color: gradient.colors.first.withValues(alpha: 0.3), blurRadius: 12, offset: const Offset(0, 4))],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(16.r),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 0.5, sigmaY: 0.5),
+            child: Padding(
+              padding: EdgeInsets.all(14.w),
+              child: Row(
+                children: [
+                  Container(width: 44.w, height: 44.h, decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(12.r)), child: Icon(icon, color: Colors.white, size: 24.sp)),
+                  SizedBox(width: 12.w),
+                  Expanded(child: Column(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    Text(title, style: TextStyle(color: Colors.white, fontSize: 15.sp, fontWeight: FontWeight.bold)),
+                    SizedBox(height: 2.h),
+                    Text(subtitle, style: TextStyle(color: Colors.white70, fontSize: 11.sp), maxLines: 1, overflow: TextOverflow.ellipsis),
+                  ])),
+                ],
+              ),
+            ),
           ),
         ),
       ),

@@ -2,12 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../../core/constants/app_constants.dart';
-import '../../../core/models/channel_model.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../playlist/viewmodels/playlist_viewmodel.dart';
 import '../../playlist/view/playlist_input_view.dart';
-import '../viewmodels/home_viewmodel.dart';
 import '../widgets/hero_banner.dart';
 import '../widgets/channel_grid_card.dart';
 import '../widgets/free_content_section.dart';
@@ -35,7 +32,6 @@ class _HomeViewState extends ConsumerState<HomeView> {
   Widget build(BuildContext context) {
     final playlistState = ref.watch(playlistProvider);
     final channels = ref.watch(channelsProvider);
-    final featured = ref.watch(featuredChannelProvider);
 
     if (playlistState == PlaylistState.loading || playlistState == PlaylistState.idle) return const ChannelLoadingSkeleton();
     if (playlistState == PlaylistState.error) return HomeErrorState(errorMessage: ref.read(playlistProvider.notifier).errorMessage);
@@ -46,7 +42,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
         controller: _scrollController,
         physics: const BouncingScrollPhysics(),
         slivers: [
-          _buildSliverAppBar(context, featured),
+          _buildSliverAppBar(context),
           const SliverToBoxAdapter(child: FreeContentSection()),
           _buildChannelsHeader(channels.length),
           SliverPadding(padding: EdgeInsets.symmetric(horizontal: 12.w), sliver: SliverGrid.builder(gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3, childAspectRatio: 0.7, crossAxisSpacing: 8, mainAxisSpacing: 8), itemCount: channels.length, itemBuilder: (_, i) => ChannelGridCard(channel: channels[i]))),
@@ -56,13 +52,14 @@ class _HomeViewState extends ConsumerState<HomeView> {
     );
   }
 
-  SliverAppBar _buildSliverAppBar(BuildContext context, ChannelModel? featured) {
+  SliverAppBar _buildSliverAppBar(BuildContext context) {
     return SliverAppBar(
-      expandedHeight: AppConstants.heroBannerHeight,
+      expandedHeight: 340.h,
       pinned: true,
       floating: false,
       backgroundColor: AppColors.background,
-      flexibleSpace: FlexibleSpaceBar(background: featured != null ? HeroBanner(channel: featured) : Container(color: AppColors.background)),
+      surfaceTintColor: Colors.transparent,
+      flexibleSpace: const FlexibleSpaceBar(background: HeroBanner()),
       title: Image.asset('assets/primeview_logo.png', height: 28.h, color: AppColors.primary, errorBuilder: (_, _, _) => Text('PrimeView', style: GoogleFonts.rubikDirt(color: AppColors.primary, fontSize: 26.sp, letterSpacing: 1))),
       actions: [
         IconButton(icon: const Icon(Icons.search), onPressed: () => widget.onSearchTap?.call()),
@@ -77,7 +74,10 @@ class _HomeViewState extends ConsumerState<HomeView> {
         padding: EdgeInsets.fromLTRB(16.w, 24.h, 16.w, 12.h),
         child: Row(
           children: [
-            Text('All Channels', style: GoogleFonts.playfairDisplay(color: Colors.white, fontSize: 26.sp, fontWeight: FontWeight.w700)),
+            ShaderMask(
+              shaderCallback: (bounds) => const LinearGradient(colors: [AppColors.primary, AppColors.primaryLight]).createShader(bounds),
+              child: Text('All Channels', style: GoogleFonts.playfairDisplay(color: Colors.white, fontSize: 26.sp, fontWeight: FontWeight.w700)),
+            ),
             const Spacer(),
             Container(padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h), decoration: BoxDecoration(color: AppColors.surfaceLight, borderRadius: BorderRadius.circular(12.r)), child: Text('$count', style: TextStyle(color: AppColors.primary, fontSize: 13.sp, fontWeight: FontWeight.w600))),
           ],

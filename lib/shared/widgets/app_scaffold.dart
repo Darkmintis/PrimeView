@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -34,40 +35,37 @@ class AppScaffold extends ConsumerWidget {
         index: currentIndex.index,
         children: screens,
       ),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          color: AppColors.surface,
-          border: Border(
-            top: BorderSide(
-              color: AppColors.divider.withValues(alpha: 0.3),
-              width: 0.5,
+      bottomNavigationBar: ClipRect(
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 24, sigmaY: 24),
+          child: Container(
+            decoration: BoxDecoration(
+              color: AppColors.background.withValues(alpha: 0.75),
+              border: Border(
+                top: BorderSide(
+                  color: Colors.white.withValues(alpha: 0.06),
+                  width: 0.5,
+                ),
+              ),
             ),
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.primary.withValues(alpha: 0.05),
-              blurRadius: 12.r,
-              spreadRadius: 0,
-              offset: const Offset(0, -2),
-            ),
-          ],
-        ),
-        child: SafeArea(
-          top: false,
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 4.h),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: List.generate(
-                _navItems.length,
-                (index) => _NavBarItem(
-                  icon: _navItems[index].icon,
-                  activeIcon: _navItems[index].activeIcon,
-                  label: _navItems[index].label,
-                  isSelected: currentIndex.index == index,
-                  onTap: () => ref
-                      .read(currentTabProvider.notifier)
-                      .state = TabIndex.values[index],
+            child: SafeArea(
+              top: false,
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 4.h),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: List.generate(
+                    _navItems.length,
+                    (index) => _NavBarItem(
+                      icon: _navItems[index].icon,
+                      activeIcon: _navItems[index].activeIcon,
+                      label: _navItems[index].label,
+                      isSelected: currentIndex.index == index,
+                      onTap: () => ref
+                          .read(currentTabProvider.notifier)
+                          .state = TabIndex.values[index],
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -115,13 +113,17 @@ class _NavBarItem extends StatelessWidget {
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 4.h),
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeOut,
+        padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
         decoration: BoxDecoration(
           color: isSelected
-              ? AppColors.primary.withValues(alpha: 0.1)
+              ? AppColors.primary.withValues(alpha: 0.12)
               : Colors.transparent,
-          borderRadius: BorderRadius.circular(10.r),
+          borderRadius: BorderRadius.circular(12.r),
+          boxShadow: isSelected
+              ? [BoxShadow(color: AppColors.primary.withValues(alpha: 0.25), blurRadius: 12, spreadRadius: -2)]
+              : null,
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -138,13 +140,13 @@ class _NavBarItem extends StatelessWidget {
                 size: 22.sp,
               ),
             ),
-            SizedBox(height: 2.h),
+            SizedBox(height: 3.h),
             Text(
               label,
               style: TextStyle(
                 color: isSelected ? AppColors.primary : AppColors.textMuted,
                 fontSize: 9.sp,
-                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                fontWeight: isSelected ? FontWeight.w700 : FontWeight.w400,
               ),
             ),
           ],
