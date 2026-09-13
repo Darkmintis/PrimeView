@@ -3,6 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/models/channel_model.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/di/injection_container.dart';
+import '../services/youtube_service.dart';
 import '../../player/view/player_view.dart';
 import '../models/youtube_video.dart';
 import '../viewmodels/youtube_viewmodel.dart';
@@ -24,8 +26,19 @@ class _YouTubeViewState extends ConsumerState<YouTubeView> {
     super.dispose();
   }
 
-  void _playVideo(YouTubeVideo video) {
-    final channel = ChannelModel(id: 'yt_${video.id}', name: video.title, url: video.streamUrl, logo: video.thumbnailUrl, category: 'YouTube', language: 'en');
+  Future<void> _playVideo(YouTubeVideo video) async {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Resolving stream...'), duration: Duration(seconds: 1), backgroundColor: AppColors.primary),
+    );
+    final streamUrl = await sl<YouTubeService>().getStreamUrl(video.id);
+    if (!mounted) return;
+    if (streamUrl == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Could not resolve video stream'), backgroundColor: AppColors.error),
+      );
+      return;
+    }
+    final channel = ChannelModel(id: 'yt_${video.id}', name: video.title, url: streamUrl, logo: video.thumbnailUrl, category: 'YouTube', language: 'en');
     Navigator.of(context).push(MaterialPageRoute(builder: (_) => PlayerView(channel: channel)));
   }
 
@@ -66,7 +79,7 @@ class _YouTubeViewState extends ConsumerState<YouTubeView> {
           ),
           if (ytState.isLoading) const SliverFillRemaining(child: Center(child: CircularProgressIndicator()))
           else if (ytState.error != null) SliverFillRemaining(child: Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [Icon(Icons.error_outline, color: AppColors.error, size: 48.sp), SizedBox(height: 16.h), Text(ytState.error!, style: TextStyle(color: AppColors.textMuted))])))
-          else SliverPadding(padding: EdgeInsets.symmetric(horizontal: 16.w), sliver: SliverGrid(gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, mainAxisSpacing: 12.h, crossAxisSpacing: 12.w, childAspectRatio: 0.75), delegate: SliverChildBuilderDelegate((_, i) => YouTubeVideoCard(video: ytState.videos[i], onTap: () => _playVideo(ytState.videos[i])), childCount: ytState.videos.length))),
+          else SliverPadding(padding: EdgeInsets.symmetric(horizontal: 16.w), sliver: SliverGrid(gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, mainAxisSpacing: 12.h, crossAxisSpacing: 12.w, childAspectRatio: 0.85), delegate: SliverChildBuilderDelegate((_, i) => YouTubeVideoCard(video: ytState.videos[i], onTap: () => _playVideo(ytState.videos[i])), childCount: ytState.videos.length))),
           SliverPadding(padding: EdgeInsets.only(bottom: 16.h), sliver: const SliverToBoxAdapter()),
         ],
       ),
