@@ -8,6 +8,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/html_utils.dart';
 import '../../../core/utils/platform_channels.dart';
 import '../../playlist/viewmodels/playlist_viewmodel.dart';
+import '../../recordings/viewmodels/recordings_viewmodel.dart';
 import '../viewmodels/player_viewmodel.dart';
 
 class VideoControls extends ConsumerStatefulWidget {
@@ -222,9 +223,31 @@ class _VideoControlsState extends ConsumerState<VideoControls>
   }
 
   Widget _buildVolumeControl(PlayerState playerState) {
+    final recordingsState = ref.watch(recordingsProvider);
+    final isRecording = recordingsState.activeRecordingId != null;
+
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
+        GestureDetector(
+          onTap: () => _toggleRecording(),
+          child: Container(
+            width: 34.w,
+            height: 34.h,
+            decoration: BoxDecoration(
+              color: isRecording
+                  ? AppColors.error.withValues(alpha: 0.2)
+                  : Colors.white.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(8.r),
+            ),
+            child: Icon(
+              isRecording ? Icons.stop_circle : Icons.fiber_manual_record,
+              color: isRecording ? AppColors.error : Colors.white,
+              size: 20.sp,
+            ),
+          ),
+        ),
+        SizedBox(width: 4.w),
         _buildIconButton(
           Icons.picture_in_picture_alt,
           () => _enterPip(),
@@ -286,6 +309,41 @@ class _VideoControlsState extends ConsumerState<VideoControls>
         ),
       ],
     );
+  }
+
+  void _toggleRecording() {
+    final recordingsState = ref.read(recordingsProvider);
+    final recordingsNotifier = ref.read(recordingsProvider.notifier);
+
+    if (recordingsState.activeRecordingId != null) {
+      recordingsNotifier.stopRecording(recordingsState.activeRecordingId!);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Recording stopped'),
+          backgroundColor: AppColors.surface,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.r),
+          ),
+        ),
+      );
+    } else {
+      recordingsNotifier.startRecording(
+        channelName: widget.currentChannel.name,
+        channelUrl: widget.currentChannel.url,
+        channelLogo: widget.currentChannel.logo,
+      );
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Recording started'),
+          backgroundColor: AppColors.surface,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.r),
+          ),
+        ),
+      );
+    }
   }
 
   Widget _buildIconButton(IconData icon, VoidCallback onTap) {
