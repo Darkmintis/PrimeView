@@ -8,6 +8,9 @@ import '../../features/favorites/services/favorites_service.dart';
 import '../../features/search/services/search_service.dart';
 import '../../features/recordings/services/recording_service.dart';
 import '../../features/youtube/services/youtube_service.dart';
+import '../../features/local/services/media_scanner.dart';
+import '../../features/local/services/permission_service.dart';
+import '../../features/local/repositories/local_repository.dart';
 import '../constants/app_constants.dart';
 import '../utils/logger.dart';
 
@@ -30,6 +33,9 @@ Future<void> initDependencies() async {
     sl.registerLazySingleton<SearchService>(() => SearchService());
     sl.registerLazySingleton<RecordingService>(() => RecordingService());
     sl.registerLazySingleton<YouTubeService>(() => YouTubeService());
+    sl.registerLazySingleton<MediaScanner>(() => MediaScanner());
+    sl.registerLazySingleton<PermissionService>(() => PermissionService());
+    sl.registerLazySingleton<LocalRepository>(() => LocalRepository());
 
     AppLogger.info('Dependencies initialized successfully');
   } catch (e) {

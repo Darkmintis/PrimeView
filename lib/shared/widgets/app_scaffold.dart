@@ -4,8 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/providers/navigation_provider.dart';
 import '../../core/theme/app_colors.dart';
 import '../../features/home/view/home_view.dart';
+import '../../features/youtube/view/youtube_view.dart';
 import '../../features/search/view/search_view.dart';
-import '../../features/favorites/view/favorites_view.dart';
+import '../../features/local/view/library_view.dart';
 import '../../features/recordings/view/recordings_view.dart';
 import '../../features/settings/view/settings_view.dart';
 
@@ -21,8 +22,9 @@ class AppScaffold extends ConsumerWidget {
         onSearchTap: () =>
             ref.read(currentTabProvider.notifier).state = TabIndex.search,
       ),
+      const YouTubeView(),
       const SearchView(),
-      const FavoritesView(),
+      const LibraryView(),
       const RecordingsView(),
       const SettingsView(),
     ];
@@ -53,7 +55,7 @@ class AppScaffold extends ConsumerWidget {
         child: SafeArea(
           top: false,
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 4.h),
+            padding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 4.h),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: List.generate(
@@ -78,9 +80,10 @@ class AppScaffold extends ConsumerWidget {
 
 const _navItems = [
   _NavItem(Icons.home_outlined, Icons.home, 'Home'),
+  _NavItem(Icons.play_circle_outline, Icons.play_circle, 'YouTube'),
   _NavItem(Icons.search_outlined, Icons.search, 'Search'),
-  _NavItem(Icons.favorite_outline, Icons.favorite, 'Favorites'),
-  _NavItem(Icons.fiber_manual_record_outlined, Icons.fiber_manual_record, 'Recordings'),
+  _NavItem(Icons.video_library_outlined, Icons.video_library, 'Library'),
+  _NavItem(Icons.fiber_manual_record_outlined, Icons.fiber_manual_record, 'Record'),
   _NavItem(Icons.settings_outlined, Icons.settings, 'Settings'),
 ];
 
@@ -113,7 +116,7 @@ class _NavBarItem extends StatelessWidget {
       behavior: HitTestBehavior.opaque,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+        padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 4.h),
         decoration: BoxDecoration(
           color: isSelected
               ? AppColors.primary.withValues(alpha: 0.1)
