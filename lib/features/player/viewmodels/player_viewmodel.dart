@@ -142,6 +142,12 @@ class PlayerViewModel extends StateNotifier<PlayerState> {
     state = state.copyWith(isPlaying: false);
   }
 
+  void stop() {
+    state.player?.stop();
+    state.player?.dispose();
+    state = state.copyWith(isPlaying: false);
+  }
+
   void togglePlayPause() {
     if (state.isPlaying) {
       pause();
@@ -252,9 +258,11 @@ class PlayerViewModel extends StateNotifier<PlayerState> {
 
   @override
   void dispose() {
-    _disposeStreams();
-    state.player?.stop();
-    state.player?.dispose();
+    _positionSub?.cancel();
+    _durationSub?.cancel();
+    _playingSub?.cancel();
+    _completedSub?.cancel();
+    stop();
     super.dispose();
   }
 }

@@ -36,6 +36,7 @@ class _PlayerViewState extends ConsumerState<PlayerView> with WidgetsBindingObse
 
   @override
   void dispose() {
+    ref.read(playerViewModelProvider.notifier).stop();
     WidgetsBinding.instance.removeObserver(this);
     WakelockPlus.disable();
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]);
@@ -82,7 +83,7 @@ class _PlayerViewState extends ConsumerState<PlayerView> with WidgetsBindingObse
     if (ps.hasError) return PlayerErrorView(errorMessage: ps.errorMessage, channel: channel);
     if (ps.isLoading && !ps.isInitialized) return PlayerLoadingView(channel: channel);
     if (ps.isInitialized && ps.controller != null) {
-      return Stack(children: [Center(child: Video(controller: ps.controller!, controls: NoVideoControls)), VideoControls(channelName: channel.name, currentChannel: channel, onChannelChanged: _switchChannel, onPipEnter: () => setState(() => _isInPip = true))]);
+      return Stack(children: [Positioned.fill(child: Video(controller: ps.controller!, controls: NoVideoControls, fit: BoxFit.contain)), VideoControls(channelName: channel.name, currentChannel: channel, onChannelChanged: _switchChannel, onPipEnter: () => setState(() => _isInPip = true))]);
     }
     return PlayerLoadingView(channel: channel);
   }
