@@ -6,6 +6,7 @@ import '../../core/theme/app_colors.dart';
 import '../../features/home/view/home_view.dart';
 import '../../features/search/view/search_view.dart';
 import '../../features/favorites/view/favorites_view.dart';
+import '../../features/recordings/view/recordings_view.dart';
 import '../../features/settings/view/settings_view.dart';
 
 class AppScaffold extends ConsumerWidget {
@@ -22,6 +23,7 @@ class AppScaffold extends ConsumerWidget {
       ),
       const SearchView(),
       const FavoritesView(),
+      const RecordingsView(),
       const SettingsView(),
     ];
 
@@ -51,7 +53,7 @@ class AppScaffold extends ConsumerWidget {
         child: SafeArea(
           top: false,
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 6.h),
+            padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 4.h),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: List.generate(
@@ -78,6 +80,7 @@ const _navItems = [
   _NavItem(Icons.home_outlined, Icons.home, 'Home'),
   _NavItem(Icons.search_outlined, Icons.search, 'Search'),
   _NavItem(Icons.favorite_outline, Icons.favorite, 'Favorites'),
+  _NavItem(Icons.fiber_manual_record_outlined, Icons.fiber_manual_record, 'Recordings'),
   _NavItem(Icons.settings_outlined, Icons.settings, 'Settings'),
 ];
 
@@ -110,12 +113,12 @@ class _NavBarItem extends StatelessWidget {
       behavior: HitTestBehavior.opaque,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+        padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
         decoration: BoxDecoration(
           color: isSelected
               ? AppColors.primary.withValues(alpha: 0.1)
               : Colors.transparent,
-          borderRadius: BorderRadius.circular(12.r),
+          borderRadius: BorderRadius.circular(10.r),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -129,7 +132,7 @@ class _NavBarItem extends StatelessWidget {
               child: Icon(
                 isSelected ? activeIcon : icon,
                 color: Colors.white,
-                size: 24.sp,
+                size: 22.sp,
               ),
             ),
             SizedBox(height: 2.h),
@@ -137,7 +140,7 @@ class _NavBarItem extends StatelessWidget {
               label,
               style: TextStyle(
                 color: isSelected ? AppColors.primary : AppColors.textMuted,
-                fontSize: 10.sp,
+                fontSize: 9.sp,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
               ),
             ),
