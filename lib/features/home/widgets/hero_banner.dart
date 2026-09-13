@@ -68,7 +68,7 @@ class _HeroBannerState extends ConsumerState<HeroBanner> {
     _startAutoRotate(items.length);
 
     return SizedBox(
-      height: 340.h,
+      height: 300.h,
       child: Stack(
         children: [
           PageView.builder(
@@ -77,7 +77,7 @@ class _HeroBannerState extends ConsumerState<HeroBanner> {
             onPageChanged: (i) => setState(() => _currentPage = i),
             itemBuilder: (_, i) => _HeroSlide(channel: items[i]),
           ),
-          if (items.length > 1) Positioned(bottom: 60.h, left: 0, right: 0, child: _PageDots(count: items.length, current: _currentPage)),
+          if (items.length > 1) Positioned(bottom: 80.h, left: 0, right: 0, child: _PageDots(count: items.length, current: _currentPage)),
           Positioned(bottom: 0, left: 0, right: 0, child: _GlassInfoPanel(channel: items[_currentPage.clamp(0, items.length - 1)])),
         ],
       ),
@@ -114,7 +114,7 @@ class _HeroSlide extends StatelessWidget {
           ),
         ),
         Positioned(
-          top: 12.h,
+          top: MediaQuery.of(context).padding.top + 8.h,
           left: 16.w,
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.h),

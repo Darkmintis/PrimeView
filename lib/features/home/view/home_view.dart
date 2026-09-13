@@ -54,7 +54,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
 
   SliverAppBar _buildSliverAppBar(BuildContext context) {
     return SliverAppBar(
-      expandedHeight: 340.h,
+      expandedHeight: 300.h,
       pinned: true,
       floating: false,
       backgroundColor: AppColors.background,
